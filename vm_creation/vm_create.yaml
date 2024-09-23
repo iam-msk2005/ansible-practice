@@ -14,11 +14,11 @@
         version: latest
   tasks:
   - name: Create a resource group
-    azure_rm_resourcegroup:
+    azure.azcollection.azure_rm_resourcegroup:
       name: "{{resource_group_name}}"
       location: "{{resource_group_location}}"
   - name: Create VM with defaults
-    azure_rm_virtualmachine:
+    azure.azcollection.azure_rm_virtualmachine:
       resource_group: "{{resource_group_name}}"
       name: "{{vm_name}}"
       admin_username: "{{ username }}"
