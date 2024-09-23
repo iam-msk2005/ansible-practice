@@ -1,0 +1,30 @@
+---
+- hosts: localhost
+  connection: local
+  vars:
+    resource_group_name: "vm_demo"
+    resource_group_location: "centralindia"
+    vm_name: "ansible-server1"
+    vm_username: "azureuser"
+    vm_password: "Saquib@1011"
+    image:
+        offer: "UbuntuServer"
+        publisher: "Canonical"
+        sku: '22_04-lts'
+        version: latest
+  tasks:
+  - name: Create a resource group
+    azure_rm_resourcegroup:
+      name: "{{resource_group_name}}"
+      location: "{{resource_group_location}}"
+  - name: Create VM with defaults
+    azure_rm_virtualmachine:
+      resource_group: "{{resource_group_name}}"
+      name: "{{vm_name}}"
+      admin_username: "{{ username }}"
+      admin_password: "{{ password }}"
+      image:
+        offer: "{{image.offer}}"
+        publisher: "{{image.publisher}}"
+        sku: "{{image.sku}}"
+        version: "{{image.version}}"
