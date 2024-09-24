@@ -3,7 +3,7 @@
   connection: local
   vars:
     resource_group_name: "vm_demo"
-    resource_group_location: "centralindia"
+    resource_group_location: "australiaeast"
     virtual_network_name: "demo-vnet"
     subnet_name: "demo-sbnet"
     security_group_name: "demo-nsg"
@@ -14,7 +14,7 @@
     image:
         offer: "UbuntuServer"
         publisher: "Canonical"
-        sku: '22_04-lts'
+        sku: '18.04-LTS'
         version: latest
   tasks:
   - name: Create a resource group
@@ -50,17 +50,25 @@
       name: "{{ vm_name }}-nic"
       virtual_network: "{{ virtual_network_name }}"
       subnet: "{{ subnet_name }}"
-      public_ip: "{{ public_ip_name }}"
       security_group: "{{ security_group_name }}"
       location: "{{ resource_group_location }}"
+      ip_configurations:
+        - name: ipconfig1
+          private_ip_allocation_method: Dynamic
+          public_ip_address: "{{ public_ip_name }}"
+          primary: true
   - name: Create VM with defaults
     azure.azcollection.azure_rm_virtualmachine:
       resource_group: "{{resource_group_name}}"
       name: "{{vm_name}}"
-      admin_username: "{{ username }}"
-      admin_password: "{{ password }}"
+      admin_username: "{{ vm_username }}"
+      admin_password: "{{ vm_password }}"
       image:
         offer: "{{image.offer}}"
         publisher: "{{image.publisher}}"
         sku: "{{image.sku}}"
         version: "{{image.version}}"
+      network_interface_names:
+        - "{{ vm_name }}-nic"
+      vm_size: "Standard_B1s"
+
