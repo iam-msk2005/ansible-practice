@@ -4,6 +4,10 @@
   vars:
     resource_group_name: "vm_demo"
     resource_group_location: "centralindia"
+    virtual_network_name: "demo-vnet"
+    subnet_name: "demo-sbnet"
+    security_group_name: "demo-nsg"
+    public_ip_name: "demo-ip"
     vm_name: "ansible-server1"
     vm_username: "azureuser"
     vm_password: "Saquib@1011"
@@ -17,6 +21,38 @@
     azure.azcollection.azure_rm_resourcegroup:
       name: "{{resource_group_name}}"
       location: "{{resource_group_location}}"
+  - name: Create virtual network
+    azure.azcollection.azure_rm_virtualnetwork:
+      resource_group: "{{ resource_group_name }}"
+      name: "{{ virtual_network_name }}"
+      address_prefixes: "10.0.0.0/16"
+      location: "{{ resource_group_location }}"
+  - name: Create subnet
+    azure.azcollection.azure_rm_subnet:
+      resource_group: "{{ resource_group_name }}"
+      name: "{{ subnet_name }}"
+      address_prefix: "10.0.1.0/24"
+      virtual_network: "{{ virtual_network_name }}"
+  - name: Create network security group
+    azure.azcollection.azure_rm_securitygroup:
+      resource_group: "{{ resource_group_name }}"
+      name: "{{ security_group_name }}"
+      location: "{{ resource_group_location }}"
+  - name: Create public IP
+    azure.azcollection.azure_rm_publicipaddress:
+      resource_group: "{{ resource_group_name }}"
+      allocation_method: Static
+      name: "{{ public_ip_name }}"
+      location: "{{ resource_group_location }}"
+  - name: Create network interface
+    azure.azcollection.azure_rm_networkinterface:
+      resource_group: "{{ resource_group_name }}"
+      name: "{{ vm_name }}-nic"
+      virtual_network: "{{ virtual_network_name }}"
+      subnet: "{{ subnet_name }}"
+      public_ip: "{{ public_ip_name }}"
+      security_group: "{{ security_group_name }}"
+      location: "{{ resource_group_location }}"
   - name: Create VM with defaults
     azure.azcollection.azure_rm_virtualmachine:
       resource_group: "{{resource_group_name}}"
