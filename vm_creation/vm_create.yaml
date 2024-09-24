@@ -17,33 +17,45 @@
         sku: '18.04-LTS'
         version: latest
   tasks:
+  
+    # Create Resource Group  
   - name: Create a resource group
     azure.azcollection.azure_rm_resourcegroup:
       name: "{{resource_group_name}}"
       location: "{{resource_group_location}}"
+  
+  # Create VNET
   - name: Create virtual network
     azure.azcollection.azure_rm_virtualnetwork:
       resource_group: "{{ resource_group_name }}"
       name: "{{ virtual_network_name }}"
       address_prefixes: "10.0.0.0/16"
       location: "{{ resource_group_location }}"
+  
+  # Create Subnet
   - name: Create subnet
     azure.azcollection.azure_rm_subnet:
       resource_group: "{{ resource_group_name }}"
       name: "{{ subnet_name }}"
       address_prefix: "10.0.1.0/24"
       virtual_network: "{{ virtual_network_name }}"
+  
+  # Create NSG
   - name: Create network security group
     azure.azcollection.azure_rm_securitygroup:
       resource_group: "{{ resource_group_name }}"
       name: "{{ security_group_name }}"
       location: "{{ resource_group_location }}"
+  
+    # Create public IP
   - name: Create public IP
     azure.azcollection.azure_rm_publicipaddress:
       resource_group: "{{ resource_group_name }}"
       allocation_method: Static
       name: "{{ public_ip_name }}"
       location: "{{ resource_group_location }}"
+  
+    # Create Network interface
   - name: Create network interface
     azure.azcollection.azure_rm_networkinterface:
       resource_group: "{{ resource_group_name }}"
@@ -57,6 +69,8 @@
           private_ip_allocation_method: Dynamic
           public_ip_address: "{{ public_ip_name }}"
           primary: true
+  
+  # Create Virtual Machine
   - name: Create VM with defaults
     azure.azcollection.azure_rm_virtualmachine:
       resource_group: "{{resource_group_name}}"
